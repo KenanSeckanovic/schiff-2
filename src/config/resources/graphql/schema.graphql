@@ -1,0 +1,99 @@
+# siehe app.module.ts
+
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+"Funktionen, um Schiffdaten zu lesen"
+type Query {
+  schiffe(suchparameter: SuchparameterInput): [Schiff!]
+
+  schiff(id: ID!): Schiff
+}
+
+"Funktionen, um Schiffe neu anzulegen, zu aktualisieren oder zu löschen"
+type Mutation {
+  create(input: SchiffInput!): CreatePayload
+
+  update(input: SchiffUpdateInput!): UpdatePayload
+
+  delete(id: ID!): DeletePayload
+
+  token(username: String!, password: String!): TokenPayload # Mutation, wenn z.B. der Login-Zeitpunkt im IDM-System gespeichert wird
+  refresh(refreshToken: String!): TokenPayload
+}
+
+"Daten zum Offizier eines Schiffs"
+type Offizier {
+  name: String!
+  alter: Int
+}
+
+"Datenschema zu einem Schiff, das gelesen wird"
+type Schiff {
+  id: ID! # ID ist bei Apollo ein String
+  version: Int!
+  name: String!
+  laenge: Float
+  offizier: Offizier # 1:1-Beziehung
+}
+
+"Suchparameter für Schiffe"
+input SuchparameterInput {
+  name: String
+  laenge: Float
+}
+
+"Daten zum Offizier eines neuen Schiffs"
+input OffizierInput {
+  name: String!
+  alter: Int
+}
+
+"Daten zu den Kisten eines Schiffs"
+input KisteInput {
+  hoehe: Float!
+  laenge: Float!
+  breite: Float!
+}
+
+"Daten für ein neues Schiff"
+input SchiffInput {
+  name: String
+  laenge: Float
+  offizier: OffizierInput!
+  kisten: [KisteInput!]
+}
+
+"Generierte ID bei erfolgreichem Neuanlegen"
+type CreatePayload {
+  id: ID
+}
+
+"Daten für ein zu änderndes Schiff"
+input SchiffUpdateInput {
+  id: ID
+  version: Int
+  name: String
+  laenge: Float
+  kisten: [KisteInput!]
+}
+
+"Neue Versionsnummer als Resultat bei erfolgreichem Aktualisieren"
+type UpdatePayload {
+  version: Int
+}
+
+"Flag, ob das Loeschen durchgefuehrt wurde"
+type DeletePayload {
+  success: Boolean
+}
+
+"Access- und Refresh-Token einschliesslich Ablauf-Zeitstempel"
+type TokenPayload {
+  access_token: String! # eslint-disable-line @graphql-eslint/naming-convention
+  expires_in: Int! # eslint-disable-line @graphql-eslint/naming-convention
+  refresh_token: String! # eslint-disable-line @graphql-eslint/naming-convention
+  refresh_expires_in: Int! # eslint-disable-line @graphql-eslint/naming-convention
+}

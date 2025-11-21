@@ -1,0 +1,38 @@
+@startuml ER Diagramm
+
+hide circle
+
+skinparam linetype ortho
+
+entity "Schiff" {
+  * id: integer <<generated>>
+  --
+  * version: integer
+  * name: text
+  * laenge: decimal(5,2)
+  * erzeugt: timestamp
+  * aktualisiert: timestamp
+}
+
+entity "Offizier" {
+  * id: integer <<generated>>
+  --
+  * name: text
+  * alter: integer
+  * **schiff_id**: integer <<FK>>
+
+}
+
+entity "Kiste" {
+  * id: integer <<generated>>
+  --
+  * hoehe: decimal(5,2)
+  * laenge: decimal(5,2)
+  * breite: decimal(5,2)
+  * **schiff_id**: integer <<FK>>
+}
+
+Schiff ||..|| Offizier
+Schiff ||..o{ Kiste
+
+@enduml
